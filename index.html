@@ -1,0 +1,204 @@
+<!-- ACTIVIDAD 17
+
+Objetivo: crear una aplicación de notas donde las notas se guarden en localStorage para que no se pierdan al recargar la pagina.
+Descripción: el usuario puede agregar y eliminar notas. las notas se almacenan en localstorage y 
+se cargan automáticamente al abrir la pagina
+
+ALUMNA: AMERICA JAZMIN ESTRADA HERNÁNDEZ 
+ -->
+ <!DOCTYPE html>
+ <html lang="es">
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Aplicación de Notas</title>
+   <style>
+     body {
+       font-family: 'Roboto', sans-serif;
+       background-color: #1a1a2e;
+       margin: 0;
+       padding: 0;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       height: 100vh;
+       color: white;
+     }
+ 
+     .container {
+       background-color: #16213e;
+       padding: 30px;
+       border-radius: 15px;
+       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+       width: 100%;
+       max-width: 500px;
+       text-align: center;
+     }
+ 
+     h1 {
+       margin-bottom: 20px;
+       font-size: 28px;
+       color: #e94560;
+     }
+ 
+     .note-input {
+       width: 100%;
+       padding: 15px;
+       border: none;
+       border-radius: 8px;
+       background-color: #0f3460;
+       margin-bottom: 20px;
+       font-size: 16px;
+       color: white;
+     }
+ 
+     .note-input:focus {
+       outline: none;
+       background-color: #533483;
+     }
+ 
+     .add-note-btn {
+       width: 100%;
+       padding: 15px;
+       background-color: #e94560;
+       color: white;
+       border: none;
+       border-radius: 8px;
+       cursor: pointer;
+       font-size: 18px;
+       transition: background-color 0.3s ease;
+     }
+ 
+     .add-note-btn:hover {
+       background-color: #eb4961;
+     }
+ 
+     .notes-list {
+       display: grid;
+       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+       gap: 15px;
+       margin-top: 20px;
+       padding: 0;
+     }
+ 
+     .note-item {
+       background-color: #533483;
+       padding: 20px;
+       border-radius: 12px;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+       position: relative;
+       word-wrap: break-word;
+       text-align: left;
+       color: white;
+     }
+ 
+     .note-item p {
+       margin: 0;
+       font-size: 14px;
+     }
+ 
+     .delete-btn {
+       position: absolute;
+       top: 10px;
+       right: 10px;
+       background-color: #f0932b;
+       color: white;
+       border: none;
+       border-radius: 50%;
+       padding: 5px 10px;
+       cursor: pointer;
+       font-size: 12px;
+     }
+ 
+     .delete-btn:hover {
+       background-color: #f0932c;
+     }
+ 
+     .empty-message {
+       color: #aaaaaa;
+       font-size: 16px;
+       margin-top: 20px;
+     }
+   </style>
+ </head>
+ <body>
+ 
+   <div class="container">
+     <h1>Mis Notas</h1>
+     <input type="text" id="note-input" class="note-input" placeholder="Escribe una nueva nota..." />
+     <button class="add-note-btn" id="add-note-btn">Agregar Nota</button>
+     <div class="notes-list" id="notes-list"></div>
+     <p class="empty-message" id="empty-message">No tienes ninguna nota aún.</p>
+   </div>
+ 
+   <script>
+     // Cargar las notas almacenadas en localStorage
+     function loadNotes() {
+       const notes = JSON.parse(localStorage.getItem('notes')) || [];
+       const notesList = document.getElementById('notes-list');
+       const emptyMessage = document.getElementById('empty-message');
+       notesList.innerHTML = ''; // Limpiar lista antes de cargar
+ 
+       if (notes.length > 0) {
+         emptyMessage.style.display = 'none';
+       } else {
+         emptyMessage.style.display = 'block';
+       }
+ 
+       notes.forEach((note, index) => {
+         const noteItem = document.createElement('div');
+         noteItem.classList.add('note-item');
+         
+         const noteText = document.createElement('p');
+         noteText.textContent = note;
+ 
+         const deleteBtn = document.createElement('button');
+         deleteBtn.textContent = '×';
+         deleteBtn.classList.add('delete-btn');
+         deleteBtn.addEventListener('click', () => deleteNote(index));
+ 
+         noteItem.appendChild(noteText);
+         noteItem.appendChild(deleteBtn);
+         notesList.appendChild(noteItem);
+       });
+     }
+ 
+     // Agregar una nueva nota
+     function addNote() {
+       const noteInput = document.getElementById('note-input');
+       const noteText = noteInput.value.trim();
+ 
+       if (noteText !== '') {
+         const notes = JSON.parse(localStorage.getItem('notes')) || [];
+         notes.push(noteText);
+         localStorage.setItem('notes', JSON.stringify(notes));
+         noteInput.value = '';
+         loadNotes();
+       }
+     }
+ 
+     // Eliminar una nota por su índice
+     function deleteNote(index) {
+       const notes = JSON.parse(localStorage.getItem('notes')) || [];
+       notes.splice(index, 1);
+       localStorage.setItem('notes', JSON.stringify(notes));
+       loadNotes();
+     }
+ 
+     // Cargar notas al abrir la página
+     document.addEventListener('DOMContentLoaded', loadNotes);
+ 
+     // Botón para agregar nota
+     document.getElementById('add-note-btn').addEventListener('click', addNote);
+ 
+     // Agregar nota con Enter
+     document.getElementById('note-input').addEventListener('keypress', function (e) {
+       if (e.key === 'Enter') {
+         addNote();
+       }
+     });
+   </script>
+ 
+ </body>
+ </html>
+ 
